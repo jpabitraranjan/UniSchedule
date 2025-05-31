@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ student.name }} - Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 60%;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .details {
+            margin-top: 20px;
+        }
+        .details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .details th, .details td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        .details th {
+            background-color: #f2f2f2;
+            width: 30%;
+        }
+        .btn {
+            display: block;
+            width: fit-content;
+            margin: 30px auto 0;
+            padding: 12px 24px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>{{ student.name }}'s Profile</h1>
+
+    <div class="details">
+        <table>
+            <tr>
+                <th>USN</th>
+                <td>{{ student.usn }}</td>
+            </tr>
+            <tr>
+                <th>Semester</th>
+                <td>{{ student.semester }}</td>
+            </tr>
+            <tr>
+                <th>Section</th>
+                <td>{{ student.section.name }}</td>
+            </tr>
+            <tr>
+                <th>Batch</th>
+                <td>{{ student.batch.name }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <a href="{% url 'batch_timetable' batch_id=student.batch.id %}" class="btn">View Batch Timetable</a>
+    <a href="{% url 'chat_list' user_type='student' user_id=student.id %}" class="btn">Chat with Students & Teachers</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Portal</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 1s ease-in;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0,255,255,0.3), transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .logo {
+            font-size: 50px;
+            font-weight: bold;
+            color: #004d4d;
+            margin-bottom: 40px;
+            z-index: 1;
+            animation: slideDown 1s ease-in-out;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            display: flex;
+            gap: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+            animation: slideUp 1s ease-in-out;
+        }
+
+        .login-box {
+            background-color: #ffffffd9;
+            padding: 30px 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 320px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(6px);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .login-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            color: #008080;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #00b3b3;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 179, 179, 0.4);
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            background-color: #009688;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: fadeSlide 1.2s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #00796b;
+            transform: scale(1.03);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                flex-direction: column;
+                gap: 30px;
+                padding: 20px;
+            }
+
+            .login-box {
+                width: 100%;
+                max-width: 350px;
+            }
+
+            .logo {
+                font-size: 36px;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">UniSchedule</div>
+
+    <div class="container">
+        <form class="login-box" method="post" action="{% url 'teacher_login' %}">
+            {% csrf_token %}
+            <h2>Teacher Login</h2>
+            <label for="employee_id">Employee ID</label>
+            <input type="text" name="employee_id" required>
+            <label for="password">Password</label>
+            <input type="password" name="password" required>
+            <button type="submit">Login</button>
+            {% if teacher_error %}
+                <div class="error">{{ teacher_error }}</div>
+            {% endif %}
+        </form>
+
+        <form class="login-box" method="post" action="{% url 'student_login' %}">
+            {% csrf_token %}
+            <h2>Student Login</h2>
+            <label for="usn">USN</label>
+            <input type="text" name="usn" required>
+            <label for="password">Password</label>
+            <input type="password" name="password" required>
+            <button type="submit">Login</button>
+            {% if student_error %}
+                <div class="error">{{ student_error }}</div>
+            {% endif %}
+        </form>
+    </div>
+</body>
+</html>

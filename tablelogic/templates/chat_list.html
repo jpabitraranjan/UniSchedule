@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Contacts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #444;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background: white;
+            margin: 10px 0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background 0.2s ease;
+        }
+
+        li:hover {
+            background: #eef2f7;
+        }
+
+        a {
+            text-decoration: none;
+            color: #0066cc;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #003f7f;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 15px;
+            background: #0066cc;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            background: #004a99;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome, {{ user.name }} ({{ user_type|title }})</h1>
+
+    <h2>Students</h2>
+    <ul>
+        {% for student in students %}
+            <li>
+                <a href="{% url 'chat_room' user_type=user_type user_id=user_id receiver_type='student' receiver_id=student.id %}">
+                    {{ student.name }} ({{ student.usn }})
+                </a>
+            </li>
+        {% empty %}
+            <li>No students found</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Teachers</h2>
+    <ul>
+        {% for teacher in teachers %}
+            <li>
+                <a href="{% url 'chat_room' user_type=user_type user_id=user_id receiver_type='teacher' receiver_id=teacher.id %}">
+                    {{ teacher.name }} ({{ teacher.employee_id }})
+                </a>
+            </li>
+        {% empty %}
+            <li>No teachers found</li>
+        {% endfor %}
+    </ul>
+
+    {% if user_type == 'student' %}
+        <a href="{% url 'student_profile' user.id %}" class="back-link">Back to Profile</a>
+    {% elif user_type == 'teacher' %}
+        <a href="{% url 'teacher_profile' user.id %}" class="back-link">Back to Profile</a>
+    {% endif %}
+</body>
+</html>

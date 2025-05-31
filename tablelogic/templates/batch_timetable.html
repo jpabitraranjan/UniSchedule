@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ batch.name }} Timetable</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        h2 {
+            color: #444;
+            font-size: 20px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        td {
+            background-color: #ffffff;
+        }
+
+        td a {
+            text-decoration: none;
+            color: #1E90FF;
+        }
+
+        td a:hover {
+            color: #0073e6;
+        }
+
+        .container {
+            width: 90%;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .no-class {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .extra-classes-table {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .extra-classes-table th {
+            background-color: #1E90FF;
+        }
+
+        .extra-classes-table td {
+            font-size: 13px;
+        }
+
+        .empty-message {
+            color: #f44336;
+            font-size: 16px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Timetable for Batch: {{ batch.name }}</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    {% for period in periods %}
+                        <th>Period {{ period }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for day in days %}
+                    <tr>
+                        <td>{{ day }}</td>
+                        {% for period in periods %}
+                            <td>
+                                {% for entry in timetable_data %}
+                                    {% if entry.day == day and entry.period == period %}
+                                        {% with e=entry.entry %}
+                                            {% if e %}
+                                                {% if e.lecture_assignment %}
+                                                    {{ e.lecture_assignment.course.code }} <br>
+                                                    {{ e.room.name }} <br>
+                                                    {{ e.lecture_assignment.teacher.name }}
+                                                {% elif e.tutorial_assignment %}
+                                                    {{ e.tutorial_assignment.course.code }} <br>
+                                                    {{ e.room.name }} <br>
+                                                    {{ e.tutorial_assignment.teacher.name }}
+                                                {% elif e.practical_assignment %}
+                                                    {{ e.practical_assignment.course.code }} <br>
+                                                    {{ e.room.name }} <br>
+                                                    
+                                                    {% for teacher in e.practical_assignment.teachers.all %}
+                                                        {{ teacher.name }}{% if not forloop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="no-class">No class</span>
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Extra Classes (Batch or Section)</h2>
+        {% if extra_classes %}
+            <table class="extra-classes-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Period</th>
+                        <th>Course</th>
+                        <th>Room</th>
+                        <th>Teacher(s)</th>
+                        <th>Batch</th>
+                        <th>Section</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cls in extra_classes %}
+                        <tr>
+                            <td>{{ cls.date }}</td>
+                            <td>{{ cls.period }}</td>
+                            <td>{{ cls.course.code }}</td>
+                            <td>{{ cls.room.name }}</td>
+                            <td>{{ cls.teacher.name }}</td>
+                            <td>
+                                {% if cls.batch %}
+                                    {{ cls.batch.name }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>{{ cls.section.name }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="empty-message">No extra classes scheduled for this batch or section.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

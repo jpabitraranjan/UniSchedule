@@ -1,0 +1,189 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extra Class Scheduler</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        h2, h3 {
+            color: #444;
+            font-size: 20px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .green {
+            background-color: #1ec718;
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .red {
+            background-color: #ff4444;
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f2f2f2;
+            border-radius: 10px;
+        }
+
+        form button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #45a049;
+        }
+
+        .empty-message {
+            color: #f44336;
+            font-size: 16px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Batch: {{ batch.name }} | Teacher: {{ teacher.name }}</h1>
+
+        <h2>Available Periods</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    {% for period in periods %}
+                        <th>Period {{ period }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for day in days %}
+                    <tr>
+                        <td><b>{{ day }}</b></td>
+                        {% for period in periods %}
+                            {% if available_slots|get_item:day|get_item:period %}
+                                <td class="green">Available</td>
+                            {% else %}
+                                <td class="red">Occupied</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Scheduled Extra Classes</h2>
+        {% if extra_classes %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Period</th>
+                        <th>Teacher</th>
+                        <th>Section</th>
+                        <th>Batch</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cls in extra_classes %}
+                        <tr>
+                            <td>{{ cls.date }}</td>
+                            <td>{{ cls.period }}</td>
+                            <td>{{ cls.teacher.name }}</td>
+                            <td>{{ cls.section.name }}</td>
+                            <td>
+                                {% if cls.batch %}
+                                    {{ cls.batch.name }}
+                                {% else %}
+                                    Section-Wide
+                                {% endif %}
+                            </td>
+                            <td>{{ cls.room.name }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="empty-message">No extra classes scheduled yet.</p>
+        {% endif %}
+
+        <h3>Assign New Extra Class</h3>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Assign Extra Class</button>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ teacher.name }} - Timetable</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        td {
+            background-color: #fff;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        h3 {
+            color: #333;
+            margin-top: 40px;
+            text-align: center;
+        }
+        .extra-class-table th, .extra-class-table td {
+            font-size: 12px;
+            padding: 8px;
+        }
+        .extra-class-table {
+            width: 100%;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+        .extra-class-table th {
+            background-color: #ff9900;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Timetable for {{ teacher.name }}</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Day / Period</th>
+                {% for period in periods %}
+                    <th>Period {{ period }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for day in days %}
+                <tr>
+                    <td>{{ day }}</td>
+                    {% for period in periods %}
+                        <td>
+                            {% for entry in timetable_data %}
+                                {% if entry.day == day and entry.period == period %}
+                                    {% if entry.entry %}
+                                        {% if entry.entry.lecture_assignment %}
+                                            <b>{{ entry.entry.lecture_assignment.course.code }}</b><br>
+                                            {% if entry.entry.lecture_assignment.section %}
+                                                <i>{{ entry.entry.lecture_assignment.section.name }} ({{ entry.entry.lecture_assignment.section.semester }})</i><br>
+                                            {% endif %}
+                                            {{ entry.entry.lecture_assignment.teacher.name }}<br>
+                                            <i>{{ entry.entry.room.name }}</i>
+                                        {% elif entry.entry.tutorial_assignment %}
+                                            <b>{{ entry.entry.tutorial_assignment.course.code }}</b><br>
+                                            {% if entry.entry.tutorial_assignment.is_section_wide %}
+                                                <i>{{ entry.entry.tutorial_assignment.section.name }}</i><br>
+                                            {% else %}
+                                                <i>{{ entry.entry.tutorial_assignment.batch.name }}</i><br>
+                                            {% endif %}
+                                            {{ entry.entry.tutorial_assignment.teacher.name }}<br>
+                                            <i>{{ entry.entry.room.name }}</i>
+                                        {% elif entry.entry.practical_assignment %}
+                                            <b>{{ entry.entry.practical_assignment.course.code }}</b><br>
+                                            {% if entry.entry.practical_assignment.is_section_wide %}
+                                                <i>{{ entry.entry.practical_assignment.section.name }}</i><br>
+                                            {% else %}
+                                                <i>{{ entry.entry.practical_assignment.section.name }} - {{ entry.entry.practical_assignment.batch.name }}</i><br>
+                                            {% endif %}
+                                            {{ entry.entry.practical_assignment.teacher1.name }}
+                                            {% if entry.entry.practical_assignment.teacher2 %}
+                                                & {{ entry.entry.practical_assignment.teacher2.name }}
+                                            {% endif %}<br>
+                                            <i>{{ entry.entry.room.name }}</i>
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Extra Classes</h3>
+
+    {% if extra_classes %}
+        <table class="extra-class-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Period</th>
+                    <th>Course</th>
+                    <th>Batch / Section</th>
+                    <th>Room</th>
+                    <th>Teachers</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cls in extra_classes %}
+                    <tr>
+                        <td>{{ cls.date }}</td>
+                        <td>{{ cls.period }}</td>
+                        <td>{{ cls.course.code }}</td>
+                        <td>
+                            {% if cls.batch %}
+                                {{ cls.batch.name }}
+                            {% endif %}
+                            {{ cls.section.name }}
+                        </td>
+                        <td>{{ cls.room.name }}</td>
+                        <td>{{ cls.teacher.name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No extra classes assigned.</p>
+    {% endif %}
+
+</body>
+</html>

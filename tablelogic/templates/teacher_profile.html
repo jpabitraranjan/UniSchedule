@@ -1,0 +1,202 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Profile</title>
+    <style>
+        /* General body styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .subject-list {
+            margin-top: 30px;
+        }
+
+        .subject-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .subject-list th, .subject-list td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        .subject-list th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .subject-list tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn.blue {
+            background-color: #008CBA;
+        }
+
+        .btn.red {
+            background-color: #c72d35;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        /* Styling for no valid assignment message */
+        .no-target {
+            font-weight: bold;
+            color: #f44336;
+            font-size: 14px;
+        }
+
+        /* Styling for the container and table rows */
+        table {
+            margin-bottom: 30px;
+        }
+
+        .subject-list td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>{{ teacher.name }}'s Profile</h1>
+
+    <div class="subject-list">
+        <h2>Subjects and Sections/Batches they teach:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Type</th>
+                    <th>Section/Batch</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in teacher_lecture_assignments %}
+                <tr>
+                    <td>{{ assignment.course.name }}</td>
+                    <td>Lecture</td>
+                    <td>{{ assignment|section_and_optional_batch }}</td>
+                    <td>
+                        {% if assignment.batch %}
+                            <a href="{% url 'extra_class_for_batch' batch_id=assignment.batch.id teacher_id=teacher.id %}">
+                                <button class="btn">Assign Extra Class</button>
+                            </a>
+                        {% elif assignment.section %}
+                            <a href="{% url 'extra_class_for_section' section_id=assignment.section.id teacher_id=teacher.id %}">
+                                <button class="btn">Assign Extra Class</button>
+                            </a>
+                        {% else %}
+                            <span class="no-target">No valid assignment target</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            
+                {% for assignment in teacher_tutorial_assignments %}
+                <tr>
+                    <td>{{ assignment.course.name }}</td>
+                    <td>Tutorial</td>
+                    <td>{{ assignment|section_and_optional_batch }}</td>
+                    <td>
+                        {% if assignment.batch %}
+                            <a href="{% url 'extra_class_for_batch' batch_id=assignment.batch.id teacher_id=teacher.id %}">
+                                <button class="btn">Assign Extra Class</button>
+                            </a>
+                        {% elif assignment.section %}
+                            <a href="{% url 'extra_class_for_section' section_id=assignment.section.id teacher_id=teacher.id %}">
+                                <button class="btn">Assign Extra Class</button>
+                            </a>
+                        {% else %}
+                            <span class="no-target">No valid assignment target</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            
+                {% for assignment in teacher_practical_assignments %}
+                <tr>
+                    <td>{{ assignment.course.name }}</td>
+                    <td>Practical</td>
+                    <td>{{ assignment|section_and_optional_batch }}</td>
+                    <td>
+                        {% if assignment.batch %}
+                            <a href="{% url 'extra_class_for_batch' batch_id=assignment.batch.id teacher_id=teacher.id %}">
+                                <button class="btn">Assign Extra Class</button>
+                            </a>
+                        {% elif assignment.section %}
+                            <a href="{% url 'extra_class_for_section' section_id=assignment.section.id teacher_id=teacher.id %}">
+                                <button class="btn">Assign Extra Class</button>
+                            </a>
+                        {% else %}
+                            <span class="no-target">No valid assignment target</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="buttons">
+        <a href="{% url 'teacher_timetable' teacher.id %}" class="btn blue">View Your Timetable</a>
+        <a href="{% url 'chat_list' user_type='teacher' user_id=teacher.id %}" class="btn">Chat with Students & Teachers</a>
+    </div>
+</div>
+
+</body>
+</html>

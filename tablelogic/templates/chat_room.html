@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat with {{ receiver.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .chat-box {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            height: 400px;
+            overflow-y: auto;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .message {
+            margin: 10px 0;
+            max-width: 70%;
+            padding: 10px;
+            border-radius: 10px;
+            position: relative;
+            clear: both;
+        }
+
+        .you {
+            background-color: #e6f2ff;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .other {
+            background-color: #eafbe7;
+            margin-right: auto;
+            text-align: left;
+        }
+
+        .message strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .message small {
+            display: block;
+            font-size: 10px;
+            margin-top: 5px;
+            color: #777;
+        }
+
+        form {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 16px;
+            font-size: 14px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        a.back {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        a.back:hover {
+            color: #004a99;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Chat with {{ receiver.name }}</h1>
+
+<div class="chat-box" id="chat-box">
+    {% for message in messages %}
+        <div class="message {% if message.sender == user %}you{% else %}other{% endif %}">
+            <strong>{{ message.sender.name }}</strong>
+            {{ message.text }}
+            <small>{{ message.timestamp|date:"Y-m-d H:i:s" }}</small>
+        </div>
+    {% empty %}
+        <p>No messages yet. Start the conversation!</p>
+    {% endfor %}
+</div>
+
+<form method="post" action="">
+    {% csrf_token %}
+    <input type="text" name="message" placeholder="Type your message here..." required autocomplete="off" />
+    <button type="submit">Send</button>
+</form>
+
+<a class="back" href="{% url 'chat_list' user_type=user_type user_id=user_id %}">← Back to Contacts</a>
+
+<script>
+    // Scroll chat box to bottom on load
+    const chatBox = document.getElementById('chat-box');
+    chatBox.scrollTop = chatBox.scrollHeight;
+</script>
+
+</body>
+</html>
